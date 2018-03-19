@@ -188,12 +188,12 @@ def Main():
                     sqlFile = readFile(data_ddlFile)
                     response = execute_sql(db_conn, sqlFile, 'node')
                 break
-            elif (data_pc_type == "sql"):
+            elif (data_pc_type == "runSql"):
                 cp = parseUrl(data_node['url'])
                 data_ddlFile = data_node['ddlfile']
                 sql_conn = create_connection(cp['db'])
                 sqlFile = readFile(data_ddlFile)
-                response = execute_sql(sql_conn, sqlFile, 'sql')
+                response = execute_sql(sql_conn, sqlFile, 'runSql')
                 break
             elif (data_pc_type == "csv"):
                 cp = parseUrl(data_node['url'])

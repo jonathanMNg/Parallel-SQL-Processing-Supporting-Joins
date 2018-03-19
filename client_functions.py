@@ -65,7 +65,7 @@ def do_connect(node, filename, returnVal, cp_type):
     data_send = node
     returnObj = {}
     returnObj['url'] = node['url']
-    if(cp_type == "node" or cp_type == "sql" or cp_type == "csv" or cp_type == "multi_thread"):
+    if(cp_type == "node" or cp_type == "runSql" or cp_type == "csv" or cp_type == "multi_thread"):
         #connect cluster machines
         returnObj['ddlfile'] = filename
         data_send['ddlfile'] = filename

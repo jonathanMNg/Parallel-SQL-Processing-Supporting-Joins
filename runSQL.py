@@ -36,7 +36,7 @@ def main():
         returnVal = []
         threads = [None] * numnodes
         for i in range(numnodes):
-             threads[i] = threading.Thread(target=do_connect, args=(cluster_cp[i],ddlfile, returnVal, 'sql'))
+             threads[i] = threading.Thread(target=do_connect, args=(cluster_cp[i],ddlfile, returnVal, 'runSql'))
              threads[i].start()
         for i in range(numnodes):
             threads[i].join()

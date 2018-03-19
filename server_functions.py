@@ -31,7 +31,7 @@ def execute_sql(conn, sqlFile, cp_type, sql_list=''):
             c.execute(sqlFile)
             conn.commit()
             response['status'] = 'catalog updated.'
-        elif(cp_type == 'sql'):
+        elif(cp_type == 'runSql'):
             c.execute(sqlFile)
             conn.commit()
             response['status'] = 'success.'
