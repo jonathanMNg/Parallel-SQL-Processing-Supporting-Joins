@@ -2,6 +2,7 @@ import json, pickle
 from urllib.parse import urlparse
 import socket
 from socket import error as socket_error
+from cluster_client import Cluster_Client
 """
 function: parseUrl()
 parameter: (string) hostname
@@ -48,6 +49,51 @@ def parse_config(filename):
             options[option] = value
     f.close()
     return options
+def runSQL(node, returnVal):
+    returnVal['schema'] = None
+    returnVal['row'] = []
+    mySocket = socket.socket()
+    cp = parseUrl(node['url'])
+    data_send = node
+    try:
+        mySocket.connect((cp['host'], int(cp['port']) ))
+        data_cp_type = 'runSQL'
+        mySocket.send(data_cp_type.encode())
+        data_recv = mySocket.recv(1024).decode()
+        data_string = pickle.dumps(data_send)
+        mySocket.send(data_string)
+        tableData = pickle.loads(mySocket.recv(4096))
+        if(tableData['isExists']):
+            returnVal['schema'] = tableData['schema']
+            for i in range (int(tableData['totalRow'])):
+                node1 = Cluster_Client(cp['host'], int(cp['port']))
+                node1.connect()
+                try:
+                    row_data = node1.recvData()
+                    returnVal['row'].append(row_data)
+                except:
+                    break
+        else:
+            pass
+        mySocket.close()
+    except socket_error as e:
+        print ('[' + node['url']+ ']:',e)
+
+def kill_runSQLSocket(node):
+    mySocket = socket.socket()
+    cp = parseUrl(node['url'])
+    node['loop'] = False
+    data_send = node
+    try:
+        mySocket.connect((cp['host'], int(cp['port']) ))
+        data_cp_type = 'runSQL'
+        mySocket.send(data_cp_type.encode())
+        data_recv = mySocket.recv(1024).decode()
+        data_string = pickle.dumps(data_send)
+        mySocket.send(data_string)
+        mySocket.close()
+    except socket_error as e:
+        print ('[' + node['url']+ ']:', e)
 """
 function: do_connect()
 parameter: (hash) node, (string) ddlfile, (array) returnVal, (string) type
@@ -65,7 +111,7 @@ def do_connect(node, filename, returnVal, cp_type):
     data_send = node
     returnObj = {}
     returnObj['url'] = node['url']
-    if(cp_type == "node" or cp_type == "runSql" or cp_type == "csv" or cp_type == "multi_thread"):
+    if(cp_type == "node" or cp_type == "" or cp_type == "csv" or cp_type == "multi_thread"):
         #connect cluster machines
         returnObj['ddlfile'] = filename
         data_send['ddlfile'] = filename

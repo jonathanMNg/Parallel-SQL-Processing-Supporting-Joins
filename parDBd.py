@@ -4,6 +4,7 @@ import sys
 from client_functions import *
 from server_functions import *
 import json, pickle
+from cluster_server import Cluster_Server
 """
 function: init()
 parameter: None
@@ -139,21 +140,19 @@ def Main():
         sys.exit()
     else:
         init()
-        mySocket = socket.socket()
-        mySocket.bind((host,port))
+        node2 = Cluster_Server(host, port)
+        node2.connect()
         while True:
             #receive type of pc
-            mySocket.listen(1)
-            socket_conn, addr = mySocket.accept()
-            data_pc_type = socket_conn.recv(1024).decode()
-            socket_conn.send(str("received data_pc_type").encode())
-            data_node = pickle.loads(socket_conn.recv(4096))
+            node2.listen()
+            data_pc_type = node2.recvMessage()
+            node2.sendMessage(str("received data_pc_type"))
+            data_node = node2.recvData()
             if (data_pc_type == "catalog"):
                 #do something with catalog database
                 #parse data from cfgFile
                 cfgFile = data_node['clustercfg']
                 cfg = parse_config(cfgFile)
-
                 numnodes = int(cfg['numnodes'])
                 """
                 For each node
@@ -188,13 +187,34 @@ def Main():
                     sqlFile = readFile(data_ddlFile)
                     response = execute_sql(db_conn, sqlFile, 'node')
                 break
-            elif (data_pc_type == "runSql"):
+            elif (data_pc_type == "runSQL"):
                 cp = parseUrl(data_node['url'])
-                data_ddlFile = data_node['ddlfile']
-                sql_conn = create_connection(cp['db'])
-                sqlFile = readFile(data_ddlFile)
-                response = execute_sql(sql_conn, sqlFile, 'runSql')
-                break
+                #sql_conn = create_connection(cp['db'])
+                response = {}
+                if(data_node['loop']):
+                    cp = parseUrl(data_node['url'])
+                    runSQL_conn = create_connection(cp['db'])
+                    c = runSQL_conn.cursor()
+                    isTableExist = "SELECT sql FROM sqlite_master WHERE name='{table_name}';".format(table_name=data_node['tableName'])
+                    c.execute(isTableExist)
+                    #if the table is exist
+                    table_cursor = c.fetchall()
+                    if(len(table_cursor) > 0):
+                        select_all = "SELECT * FROM {table_name}".format(table_name=data_node['tableName'])
+                        c.execute(select_all)
+                        rows = c.fetchall()
+                        totalRow = len(rows)
+                        tableData = {'isExists': True, 'totalRow': totalRow, 'schema': table_cursor[0][0]}
+                        node2.sendData(tableData)
+
+                        for row in rows:
+                            node2.listen()
+                            node2.sendData(row)
+                    else:
+                        tableData = {'isExists': False}
+                        node2.sendData(tableData)
+                else:
+                    break
             elif (data_pc_type == "csv"):
                 cp = parseUrl(data_node['url'])
                 csv_delimiter = data_node['delimiter']
@@ -206,8 +226,7 @@ def Main():
                 tName = data_node['tName']
                 response = parse_cat_db(cp['db'], tName)
                 if(data_node['loop']):
-                    data_response = pickle.dumps(response)
-                    socket_conn.send(data_response)
+                    node2.sendData(response)
                 else:
                     break
             elif (data_pc_type == "multi_thread"):
@@ -217,8 +236,7 @@ def Main():
                     csv_conn = create_connection(cp['db'])
                     response = multi_threadloadCSV(data_node, csv_conn, csv_delimiter)
                     if(data_node['loop']):
-                        data_response = pickle.dumps(response)
-                        socket_conn.send(data_response)
+                        node2.sendData(response)
                     else:
                         break
                 else:
@@ -229,16 +247,14 @@ def Main():
                 selColIndex, numCol = getSelectedColData(data_node)
                 response = {'selectedColIndex': selColIndex, 'numCol': numCol}
                 if(data_node['loop']):
-                    data_response = pickle.dumps(response)
-                    socket_conn.send(data_response)
+                    node2.sendData(response)
                 else:
                     break
             else:
                 break
 
-        data_response = pickle.dumps(response)
-        socket_conn.send(data_response)
-        socket_conn.close()
+        node2.sendData(response)
+        node2.close()
 
 if __name__ == '__main__':
     Main()

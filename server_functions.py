@@ -190,7 +190,10 @@ def parse_cat_db(db_name, tName):
     cat_conn = create_connection(db_name)
     if cat_conn is not None:
         c = cat_conn.cursor()
-        c.execute("SELECT * FROM dtables WHERE tname='{tName}'".format(tName=tName))
+        if(tName is not None):
+            c.execute("SELECT * FROM dtables WHERE tname='{tName}'".format(tName=tName))
+        else:
+            c.execute("SELECT * FROM dtables")
         tData = []
         for row in c.fetchall():
             node = {}
