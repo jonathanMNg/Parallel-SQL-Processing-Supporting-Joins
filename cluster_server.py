@@ -10,18 +10,19 @@ class Cluster_Server(Cluster):
         self.mySocket.bind((self.host, self.port))
     #send message under a string
     def sendMessage(self, message):
-        self.conn.send(message.encode())
+        return self.conn.sendall(message.encode())
     #receive message under a string
     def recvMessage(self):
         return self.conn.recv(1024).decode()
     #send data under an object
     def sendData(self, dataObject):
-        self.conn.send(pickle.dumps(dataObject))
+        return self.conn.sendall(pickle.dumps(dataObject))
     #receive data under an object
     def recvData(self):
         return pickle.loads(self.conn.recv(4096))
     def listen(self):
         self.mySocket.listen()
         self.conn, self.addr = self.mySocket.accept()
+        return self.conn, self.addr
     def close(self):
         self.conn.close()

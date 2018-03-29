@@ -43,7 +43,7 @@ def main():
     init()
     cfg = parse_config(clustercfg)
     cat_db_name = parseUrl(cfg['catalog.hostname'])['db']
-    cat_node = {'url': cfg['catalog.hostname'], 'tName': cfg['tablename'], 'loop': True}
+    cat_node = {'url': cfg['catalog.hostname'], 'tName': cfg['tablename'].upper(), 'loop': True}
     cat_db = do_connect(cat_node, clustercfg, None, 'parse_cat_db')
     partmtd = get_partmtd(cfg['partition.method'])
     if(partmtd == 2):

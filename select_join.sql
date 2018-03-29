@@ -1,4 +1,4 @@
-SELECT S.sname
+SELECT C.course, S.sname
 FROM STUDENTS S, COURSES C
-WHERE S.sid=C.sid AND C.course= "CS"
+WHERE S.sid=C.sid
 ;

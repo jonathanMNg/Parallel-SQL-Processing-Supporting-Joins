@@ -31,14 +31,11 @@ def execute_sql(conn, sqlFile, cp_type, sql_list=''):
             c.execute(sqlFile)
             conn.commit()
             response['status'] = 'catalog updated.'
-        elif(cp_type == 'runSql'):
+        elif(cp_type == 'runSQL'):
             c.execute(sqlFile)
             conn.commit()
             response['status'] = 'success.'
-            tData = []
-            for row in c.fetchall():
-                tData.append(row)
-            response['data'] = tData
+            response['data'] = c.fetchall()
         elif(cp_type == 'csv'):
             for sql_ in sql_list:
                 c.execute(sqlFile, sql_)

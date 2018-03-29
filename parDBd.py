@@ -173,6 +173,43 @@ def Main():
                         tNames.append(row[0])
                     response = init_catalog(cfgFile, tNames, node)
                 break
+            elif (data_pc_type == "runLocalNode"):
+                response = {}
+                cp = parseUrl(data_node['url'])
+                cluster_cp = data_node['cluster_cp']
+                ddlfile = data_node['ddlfile']
+                numnodes =  count_db_nodes(cluster_cp)
+                threads = [None] * numnodes
+                #get table name
+                tables = data_node['tables']
+                returnVal = {}
+                join_nodes = []
+                for table in tables:
+                    returnVal[table] = {}
+                    for i in range(numnodes):
+                        if(cluster_cp[i]['tNames'] == table):
+                            join_nodes.append(cluster_cp[i]['url'])
+                        cluster_cp[i]['tableName'] = table
+                        cluster_cp[i]['loop'] = True
+                        threads[i] = threading.Thread(target=runSQL, args=(cluster_cp[i],returnVal[table],))
+                        threads[i].start()
+                    for i in range(numnodes):
+                        threads[i].join()
+                for i in range(numnodes):
+                    kill_runSQLSocket(cluster_cp[i])
+                db_conn = create_connection(cp['db'])
+                c = db_conn.cursor()
+                for table in returnVal:
+                    tableData = returnVal[table]
+                    create_table_sql = "{create_table_sql};".format(create_table_sql=tableData['schema'])
+                    create_temp_table_sql = create_table_sql.replace("TABLE", "TEMP TABLE")
+                    c.execute(create_temp_table_sql)
+                    for row in tableData['row']:
+                        insert_sql = "INSERT INTO {table_name} VALUES {row};".format(table_name=table,row=row)
+                        c.execute(insert_sql)
+                response = execute_sql(db_conn, readFile(ddlfile), 'runSQL', None)
+                response['returnVal'] = join_nodes
+                break
             elif (data_pc_type == "catalog_csv"):
                 cp = data_node['url']
                 cat_data = data_node['data']
@@ -206,7 +243,6 @@ def Main():
                         totalRow = len(rows)
                         tableData = {'isExists': True, 'totalRow': totalRow, 'schema': table_cursor[0][0]}
                         node2.sendData(tableData)
-
                         for row in rows:
                             node2.listen()
                             node2.sendData(row)
@@ -252,7 +288,6 @@ def Main():
                     break
             else:
                 break
-
         node2.sendData(response)
         node2.close()
 
