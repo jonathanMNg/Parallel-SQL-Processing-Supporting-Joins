@@ -1,0 +1,1 @@
+This test is testing for loading data using a csv ddlfile to load data into the database tables.

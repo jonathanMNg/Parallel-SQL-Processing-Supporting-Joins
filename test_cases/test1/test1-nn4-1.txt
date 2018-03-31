@@ -1,0 +1,3 @@
+This test is testing for the create table from using a sql ddlfile.
+Also the table created by the sql ddlfile should also be stored in the dtables in mycatdb. And it should display the ouput in test1-nn4-1.out
+The expected output for this test is empty.

@@ -1,0 +1,15 @@
+#!/bin/bash
+rm -rf mycatdb
+rm -rf mydb1
+rm -rf mydb2
+rm -rf test3-nn4*
+./test_cases/test3/test3-nn4-1.pre
+
+python3 parDBd.py 192.168.1.8 50001 &
+python3 parDBd.py 192.168.1.8 50002 &
+python3 parDBd.py 192.168.1.8 50003 &
+
+python3 runSQL.py ./test_cases/test3/test3-nn4-1.cfg ./test_cases/test3/test3-nn4-1.sql | sort > test3-nn4-1.out
+./test_cases/test3/test3-nn4-1.post | sort > test3-nn4-1.post.out
+echo 'diff ./test3-nn4-1.post.out  ./test_cases/test3/test3-nn4-1.post.exp'
+diff ./test3-nn4-1.post.out  ./test_cases/test3/test3-nn4-1.post.exp

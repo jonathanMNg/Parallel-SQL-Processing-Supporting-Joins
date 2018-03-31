@@ -1,0 +1,2 @@
+COURSES|com.ibm.db2.jcc.DB2Driver|192.168.1.8:50002/mydb1||||1|||
+COURSES|com.ibm.db2.jcc.DB2Driver|192.168.1.8:50003/mydb2||||2|||

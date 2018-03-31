@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cp -r ./test_cases/test2/db/* .

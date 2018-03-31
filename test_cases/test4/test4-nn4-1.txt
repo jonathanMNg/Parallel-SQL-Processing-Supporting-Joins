@@ -1,0 +1,2 @@
+This test is testing for querying the distrubuted tables using SQL on a single table.
+It will return the name of the student who is in course `CS`

@@ -1,0 +1,4 @@
+#!/bin/bash
+python3 parDBd.py 192.168.1.8 50001 &
+python3 parDBd.py 192.168.1.8 50002 &
+python3 parDBd.py 192.168.1.8 50003 &

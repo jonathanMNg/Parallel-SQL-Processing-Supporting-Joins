@@ -1,0 +1,1 @@
+CREATE TABLE COURSES(sid INTEGER, course char(80))

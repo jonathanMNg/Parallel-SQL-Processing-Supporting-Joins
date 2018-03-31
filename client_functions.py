@@ -141,8 +141,11 @@ def do_connect(node, filename, returnVal, cp_type):
         if(cp_type == 'parse_cat_db' or cp_type == 'get_partition_data' or cp_type == 'multi_thread'):
             client_node.close()
             return data_response
-        returnObj['status'] = data_response['status']
-        returnObj['ddlfile'] = node['ddlfile']
+        if(data_response.get('status')):
+            returnObj['status'] = data_response['status']
+        else:
+            returnObj['status'] = None
+        #returnObj['ddlfile'] = node['ddlfile']
         returnVal.append(returnObj)
         client_node.close()
     except socket_error as e:

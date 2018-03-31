@@ -1,0 +1,10 @@
+#!/bin/bash
+rm -rf mycatdb
+rm -rf mydb1
+rm -rf mydb2
+rm -rf test1-nn4*
+./test_cases/test1/test1-nn4-1.pre
+python3 runSQL.py ./test_cases/test1/test1-nn4-1.cfg ./test_cases/test1/test1-nn4-1.sql | sort > test1-nn4-1.out
+./test_cases/test1/test1-nn4-1.post | sort > test1-nn4-1.post.out
+echo 'diff ./test1-nn4-1.post.out  ./test_cases/test1/test1-nn4-1.post.exp'
+diff ./test1-nn4-1.post.out  ./test_cases/test1/test1-nn4-1.post.exp

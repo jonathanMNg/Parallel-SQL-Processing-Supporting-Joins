@@ -1,0 +1,12 @@
+1|CS
+1|CS
+2|Math
+2|Math
+3|Math
+3|Math
+4|Sport
+4|Sport
+5|CS
+5|CS
+COURSES|com.ibm.db2.jcc.DB2Driver|192.168.1.8:50002/mydb1|||0|1|None|None|None
+COURSES|com.ibm.db2.jcc.DB2Driver|192.168.1.8:50003/mydb2|||0|2|None|None|None
