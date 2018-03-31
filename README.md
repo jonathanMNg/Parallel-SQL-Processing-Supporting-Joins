@@ -234,4 +234,4 @@ Steve
 [192.168.1.8:50003/mydb2]: ./select_join.sql success.
 
 ```
-According to the illustrated join table above, the output is exactly what the output should be
+According to the illustrated join table above, the output is exactly what the output should be.
