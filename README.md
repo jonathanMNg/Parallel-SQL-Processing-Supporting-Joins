@@ -209,6 +209,14 @@ sqlite> SELECT * FROM COURSES;
 5|CS
 sqlite>
 ```
+So when they are joined the table should look like:
+sid| S.sname  |C.course
+-----------------------
+1  | Jane Doe | CS
+2  | Darius   | Math
+3  | Draven   | Math
+4  | Xavier   | Sport
+5  | Steve    | CS
 - Fire up the server machines (same as above). **Attention** you don't need to fire up the catalog server since there is no update to the catalog database.
 
 - On the client machine, type:
@@ -224,3 +232,4 @@ Steve
 [192.168.1.8:50003/mydb2]: ./select_join.sql success.
 
 ```
+According to the illustrated join table above, the output is exactly what the output should be
