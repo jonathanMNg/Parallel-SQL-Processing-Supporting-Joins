@@ -50,6 +50,13 @@ def parse_config(filename):
             options[option] = value
     f.close()
     return options
+"""
+function: runSQL()
+parameter: (conf) node, (dict) returnVal
+return: None
+This function receive the config node as parameter, and passed returnVal by reference
+It will connect to the server socket and query the ddlfile from the server, then return the result into returnVal and also the status failed or succeed
+"""
 def runSQL(node, returnVal):
     returnVal['schema'] = None
     returnVal['row'] = []
@@ -79,7 +86,13 @@ def runSQL(node, returnVal):
         mySocket.close()
     except socket_error as e:
         print ('[' + node['url']+ ']:',e)
-
+"""
+function: kill_runSQLSocket()
+parameter: (conf) node,
+return: None
+This function will kill the connection the the socket by sending a signal
+to make the socket loop (which run indifinitely) break.
+"""
 def kill_runSQLSocket(node):
     mySocket = socket.socket()
     cp = parseUrl(node['url'])
