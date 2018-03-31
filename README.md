@@ -210,8 +210,8 @@ sqlite> SELECT * FROM COURSES;
 sqlite>
 ```
 So when they are joined the table should look like:
-sid| S.sname  |C.course
 ```
+sid| S.sname  |C.course
 -----------------------
 1  | Jane Doe | CS
 2  | Darius   | Math
