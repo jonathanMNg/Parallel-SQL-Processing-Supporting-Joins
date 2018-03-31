@@ -177,7 +177,38 @@ python3 ./runSQL.py ./cluster.cfg ./courses.csv
 [192.168.1.8:50001/mycatdb]:  catalog updated.
 ```
 #### Retrieve data from database
+Since we already loaded data into our database tables. Let take a look:
 
+`mydb1:`
+```
+sqlite> .tables
+STUDENTS
+sqlite> PRAGMA table_info ('STUDENTS');
+0|sid|INTEGER|0||0
+1|sname|char(80)|0||0
+sqlite> select * FROM STUDENTS;
+1|Jane Doe
+2|Darius
+3|Draven
+4|Xavier
+5|Steve
+sqlite>
+```
+`mydb2:`
+```
+sqlite> .tables
+COURSES
+sqlite> PRAGMA table_info ('COURSES');
+0|sid|INTEGER|0||0
+1|course|char(80)|0||0
+sqlite> SELECT * FROM COURSES;
+1|CS
+2|Math
+3|Math
+4|Sport
+5|CS
+sqlite>
+```
 - Fire up the server machines (same as above). **Attention** you don't need to fire up the catalog server since there is no update to the catalog database.
 
 - On the client machine, type:
